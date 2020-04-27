@@ -59,11 +59,11 @@ def get_db():
         flask.g.sqlite_db = connect_db()
     return flask.g.sqlite_db
 
-        
-def procesarCursos():
+
+def procesarCursos(filtroSemestre):
     """
     Función que procesa la información de la base de datos, transformándola en datos para enviar a la página.
-    Entrada: Ninguna.
+    Entrada: filtroSemestre, variable que representa qué semestre se escogió para visualizar los cursos.
     Salida: Datos procesados.
     """
 
@@ -71,9 +71,14 @@ def procesarCursos():
     db = get_db()
 
     # Recupera (de la base de datos) los periodos
-    cur1 = db.execute("select d.codigo, d.nombre, d.grupo, e.nombre, f.dia, f.horainicio, f.horafin \
-                       from curso as d, profesor as e, horario as f \
-                       where d.id_profesor=e.id and d.id = f.id_curso")
+    if(filtroSemestre == 0):
+        cur1 = db.execute("select d.codigo, d.nombre, d.grupo, e.nombre, f.dia, f.horainicio, f.horafin \
+                           from curso as d, profesor as e, horario as f \
+                           where d.id_profesor=e.id and d.id = f.id_curso")
+    else:
+        cur1 = db.execute("select d.codigo, d.nombre, d.grupo, e.nombre, f.dia, f.horainicio, f.horafin \
+                           from curso as d, profesor as e, horario as f \
+                           where d.id_profesor=e.id and d.id = f.id_curso and d.semestre = ?",[filtroSemestre])
     cursos = cur1.fetchall()
 
     # for i in cursos:
@@ -124,7 +129,11 @@ def pagina_principal():
     Salida: La página web
     """
 
-    datos = procesarCursos()
+    filtroSemestre = 0
+    if flask.request.method == 'POST':
+        filtroSemestre = int(flask.request.form["filtroSemestre"])
+
+    datos = procesarCursos(filtroSemestre)
     
     return flask.render_template("main.html",datos={"Lunes":datos[0],
                                                     "Martes":datos[1],
@@ -132,11 +141,12 @@ def pagina_principal():
                                                     "Jueves":datos[3],
                                                     "Viernes":datos[4],
                                                     "Sabado":datos[5],
-                                                    "Domingo":datos[6],})
+                                                    "Domingo":datos[6],
+                                                    "semestre":filtroSemestre})
 
 
 if(__name__ == "__main__"):
     if len(sys.argv) > 2 and sys.argv[1] == 'initdb':
         init_db()
 
-    app.run(host="127.0.0.1", port=5051)
+    app.run(host="127.0.0.1", port=5059)

@@ -55,46 +55,65 @@
 <br>
 <h1>HORARIO SEMANAL</h1>
 <br>
-<br>
-<div id="tabs">
-	<ul>
-		<li><a href="#tabs-Lunes">Lunes</a></li>
-		<li><a href="#tabs-Martes">Martes</a></li>
-		<li><a href="#tabs-Miercoles">Miércoles</a></li>
-		<li><a href="#tabs-Jueves">Jueves</a></li>
-		<li><a href="#tabs-Viernes">Viernes</a></li>
-		<li><a href="#tabs-Sabado">Sábado</a></li>
-		<li><a href="#tabs-Domingo">Domingo</a></li>
-	</ul>
-	{% for dia in ["Lunes","Martes","Miercoles","Jueves","Viernes","Sabado","Domingo"] %}
-	<div id="tabs-{{dia}}">
-		<table name="tabla{{dia}}" id="tabla{{dia}}" border="1">
-			{% for i in range(7,21) %}
-			<tr>
-				<th>{{i}}:00</th>
-				{% for clase in datos[dia] %}
-				{% if clase["horaInicio"] == i+0.0 %}
-				<td rowspan="{{clase['span']}}" bgcolor="#00467c">
-					<a href="#" style="color:white" data-toggle="tooltip" title="{{clase['nombre']}} &#013; Grupo: {{clase['grupo']}} &#013; Profesor: {{clase['profesor']}}">{{clase['codigo']}}</a>
-				</td>
-				{% endif %}
+<form name="forma" id="forma" action="{{ url_for('pagina_principal')}}" method=post>
+	Semestre:
+	<select name="filtroSemestre">
+		{% if datos["semestre"] == 0 %}
+	  		<option value="0" selected>Todos</option>
+		{% else %}
+			<option value="0">Todos</option>
+		{% endif %}
+		{% for i in range(1,11) %}
+			{% if datos["semestre"] == i %}
+  				<option value="{{i}}" selected>{{i}}</option>
+			{% else %}
+				<option value="{{i}}">{{i}}</option>
+			{% endif %}
+		{% endfor %}
+	</select>
+	<input type=submit value='Filtrar'>
+	<br>
+	<br>
+	<div id="tabs">
+		<ul>
+			<li><a href="#tabs-Lunes">Lunes</a></li>
+			<li><a href="#tabs-Martes">Martes</a></li>
+			<li><a href="#tabs-Miercoles">Miércoles</a></li>
+			<li><a href="#tabs-Jueves">Jueves</a></li>
+			<li><a href="#tabs-Viernes">Viernes</a></li>
+			<li><a href="#tabs-Sabado">Sábado</a></li>
+			<li><a href="#tabs-Domingo">Domingo</a></li>
+		</ul>
+		{% for dia in ["Lunes","Martes","Miercoles","Jueves","Viernes","Sabado","Domingo"] %}
+		<div id="tabs-{{dia}}">
+			<table name="tabla{{dia}}" id="tabla{{dia}}" border="1">
+				{% for i in range(7,21) %}
+				<tr>
+					<th>{{i}}:00</th>
+					{% for clase in datos[dia] %}
+					{% if clase["horaInicio"] == i+0.0 %}
+					<td rowspan="{{clase['span']}}" bgcolor="#00467c">
+						<a href="#" style="color:white" data-toggle="tooltip" title="{{clase['nombre']}} &#013; Grupo: {{clase['grupo']}} &#013; Profesor: {{clase['profesor']}}">{{clase['codigo']}}</a>
+					</td>
+					{% endif %}
+					{% endfor %}
+				</tr>
+				<tr>
+					<th>{{i}}:30</th>
+					{% for clase in datos[dia] %}
+					{% if clase["horaInicio"] == i+0.5 %}
+					<td rowspan="{{clase['span']}}">
+						<a href="#" data-toggle="tooltip" title="{{clase['nombre']}} &#013; Grupo: {{clase['grupo']}} &#013; Profesor: {{clase['profesor']}}">{{clase['codigo']}}</a>
+					</td>
+					{% endif %}
+					{% endfor %}
+				</tr>
 				{% endfor %}
-			</tr>
-			<tr>
-				<th>{{i}}:30</th>
-				{% for clase in datos[dia] %}
-				{% if clase["horaInicio"] == i+0.5 %}
-				<td rowspan="{{clase['span']}}">
-					<a href="#" data-toggle="tooltip" title="{{clase['nombre']}} &#013; Grupo: {{clase['grupo']}} &#013; Profesor: {{clase['profesor']}}">{{clase['codigo']}}</a>
-				</td>
-				{% endif %}
-				{% endfor %}
-			</tr>
-			{% endfor %}
-		</table>
+			</table>
+		</div>
+		{% endfor %}
 	</div>
-	{% endfor %}
-</div>
+</form>
 {% endblock %}
 </body>
 </html>
