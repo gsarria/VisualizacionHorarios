@@ -23,9 +23,9 @@ html 			{ font-size: 70%; }
                   border: 1px solid #aacbe2; }
 .error          { background: #f0d6d6; padding: 0.5em; }
 
-.thickh2        
-{  
-	font-weight: 600; 
+.thickh2
+{
+	font-weight: 600;
 }
 
 .showNotes{
@@ -33,12 +33,12 @@ html 			{ font-size: 70%; }
   margin: 2px;
 }
 
-.textIn         
+.textIn
 {
  width:80%;
  height:100px;
 }
-.textIn2         
+.textIn2
 {
  width:60%;
  height:60px;
@@ -93,7 +93,7 @@ html 			{ font-size: 70%; }
 }
 
 .caption-style{
-  text-align: center; 
-  background-color: gray; 
+  text-align: center;
+  background-color: gray;
   border: 1px solid black;
 }

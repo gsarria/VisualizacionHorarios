@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
     <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
     <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
-
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> -->
@@ -29,8 +28,8 @@
     <script>
         $(function() {
             $( "#tabs" ).tabs();
-            $(".ui-tabs").css("background", "rgb(255,228,181)");
-            $(".ui-tabs-panel").css("background", "rgb(255,228,181)");
+            $(".ui-tabs").css("background", "rgb(255,241,0)");
+            $(".ui-tabs-panel").css("background", "rgb(255,255,255)");
             $(".ui-tabs-nav").css("background", "transparent");
         });
     </script>
@@ -43,6 +42,18 @@
 
 <body>
 {% block body %}
+<br>
+<br>
+<table>
+	<tr>
+		<td><img src="../../../static/logo.png" width="313" height="159"></td>
+		<td width="20">&nbsp;</td>
+		<td><h4>Facultad de Ingeniería y Ciencias</h4></td>
+	</tr>
+</table>
+<br>
+<br>
+<h1>HORARIO SEMANAL</h1>
 <br>
 <br>
 <div id="tabs">
@@ -63,7 +74,7 @@
 				<th>{{i}}:00</th>
 				{% for clase in datos[dia] %}
 				{% if clase["horaInicio"] == i+0.0 %}
-				<td rowspan="{{clase['span']}}">
+				<td rowspan="{{clase['span']}}" bgcolor="#00467c" class="white">
 					<a href="#" data-toggle="tooltip" title="{{clase['nombre']}} &#013; Grupo: {{clase['grupo']}} &#013; Profesor: {{clase['profesor']}}">{{clase['codigo']}}</a>
 				</td>
 				{% endif %}
