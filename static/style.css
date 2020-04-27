@@ -1,0 +1,99 @@
+body            { font-family: sans-serif; }
+a, h1, h2       { color: #377ba8; }
+h1, h2          { color: black; }
+h1, h2, h3      { font-family: 'Georgia', serif; margin: 1; }
+h1              { font-size: 1.8em; }
+h2              { font-size: 1.6em; }
+h3              { font-size: 1.4em; }
+h4              { font-size: 1.2em; }
+h5              { font-size: 1em; }
+html 			{ font-size: 70%; }
+
+.espBody{background: #eee;}
+.page           { margin: 2em auto; width: 50em auto; height: 50em auto; border: 5px solid #ccc;
+                  padding: 0.8em; background: rgb(255,228,181); }
+.entries        { list-style: none; margin: 0; padding: 0; }
+.entries li     { margin: 0.8em 1.2em; }
+.entries li h2  { margin-left: -1em; }
+.add-entry      { font-size: 0.9em; border-bottom: 1px solid #ccc; }
+.add-entry dl   { font-weight: bold; }
+.metanav        { text-align: right; font-size: 0.8em; padding: 0.3em;
+                  margin-bottom: 1em; background: #fafafa; }
+.flash          { background: #cee5F5; padding: 0.5em;
+                  border: 1px solid #aacbe2; }
+.error          { background: #f0d6d6; padding: 0.5em; }
+
+.thickh2        
+{  
+	font-weight: 600; 
+}
+
+.showNotes{
+  padding: 5px;
+  margin: 2px;
+}
+
+.textIn         
+{
+ width:80%;
+ height:100px;
+}
+.textIn2         
+{
+ width:60%;
+ height:60px;
+}
+.note-table{
+	empty-cells: show;
+  border: 1px solid;
+  margin-top: 1%;
+  margin-bottom: 1%;
+}
+
+.border-table{
+  border-left:1px solid;
+  border-bottom:1px solid;
+  padding:.5em .5em .5em 3em;
+}
+.Sborder-table{
+  border-bottom:1px solid;
+  padding:.5em .5em .5em 3em;
+}
+.Lborder-table{
+  border-left:1px solid;
+  padding:.5em .5em .5em 3em;
+}
+.Fborder-table{
+  padding:.5em .5em .5em 3em;
+  border-bottom:1px solid;
+}
+.FSborder-table{
+  padding:.5em .5em .5em 3em;
+  border-bottom:1px solid;
+  border-right:1px solid;
+}
+.FLborder-table{
+  padding:.5em .5em .5em 3em;
+}
+.Hborder-table{
+  font-weight: bold;
+  border-left:1px solid;
+  border-bottom:1px solid;
+  padding:.5em .5em .5em 3em;
+}
+.FHborder-table{
+  font-weight: bold;
+  border-bottom:1px solid;
+  padding:.5em .5em .5em 3em;
+}
+
+.Cborder-table{
+  border:1px solid;
+  padding:.5em .5em .5em 3em;
+}
+
+.caption-style{
+  text-align: center; 
+  background-color: gray; 
+  border: 1px solid black;
+}

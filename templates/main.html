@@ -1,0 +1,81 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HORARIOS - Facultad de Ingeniería</title>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> -->
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .wrapper {
+            width: 800px;
+        }
+    </style>
+    <script src="js/lib/angular.min.js"></script>
+    <script>
+        $(function() {
+            $( "#tabs" ).tabs();
+            $(".ui-tabs").css("background", "rgb(255,228,181)");
+            $(".ui-tabs-panel").css("background", "rgb(255,228,181)");
+            $(".ui-tabs-nav").css("background", "transparent");
+        });
+    </script>
+    <script>
+        $(document).ready(function(){
+			$('[data-toggle="tooltip"]').tooltip();   
+		});
+    </script>
+</head>
+
+<body>
+{% block body %}
+<br>
+<br>
+<div id="tabs">
+	<ul>
+		<li><a href="#tabs-Lunes">Lunes</a></li>
+		<li><a href="#tabs-Martes">Martes</a></li>
+		<li><a href="#tabs-Miercoles">Miércoles</a></li>
+		<li><a href="#tabs-Jueves">Jueves</a></li>
+		<li><a href="#tabs-Viernes">Viernes</a></li>
+		<li><a href="#tabs-Sabado">Sábado</a></li>
+		<li><a href="#tabs-Domingo">Domingo</a></li>
+	</ul>
+	{% for dia in ["Lunes","Martes","Miercoles","Jueves","Viernes","Sabado","Domingo"] %}
+	<div id="tabs-{{dia}}">
+		<table name="tabla{{dia}}" id="tabla{{dia}}" border="1">
+			{% for i in range(7,21) %}
+			<tr>
+				<th>{{i}}:00</th>
+				{% for clase in datos[dia] %}
+				{% if clase["horaInicio"] == i+0.0 %}
+				<td rowspan="{{clase['span']}}">
+					<a href="#" data-toggle="tooltip" title="{{clase['nombre']}}">{{clase['codigo']}}</a>
+				</td>
+				{% endif %}
+				{% endfor %}
+			</tr>
+			<tr>
+				<th>{{i}}:30</th>
+				{% for clase in datos[dia] %}
+				{% if clase["horaInicio"] == i+0.5 %}
+				<td rowspan="{{clase['span']}}">
+					<a href="#" data-toggle="tooltip" title="{{clase['nombre']}}">{{clase['codigo']}}</a>
+				</td>
+				{% endif %}
+				{% endfor %}
+			</tr>
+			{% endfor %}
+		</table>
+	</div>
+	{% endfor %}
+</div>
+{% endblock %}
+</body>
+</html>
