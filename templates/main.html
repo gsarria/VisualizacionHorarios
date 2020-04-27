@@ -16,6 +16,14 @@
         .wrapper {
             width: 800px;
         }
+        .ui-tooltip {
+    		/* tooltip container box */
+    		white-space: pre-line;
+		}
+		.ui-tooltip-content {
+    		/* tooltip content */
+    		white-space: pre-line;
+		}
     </style>
     <script src="js/lib/angular.min.js"></script>
     <script>
@@ -56,7 +64,7 @@
 				{% for clase in datos[dia] %}
 				{% if clase["horaInicio"] == i+0.0 %}
 				<td rowspan="{{clase['span']}}">
-					<a href="#" data-toggle="tooltip" title="{{clase['nombre']}}">{{clase['codigo']}}</a>
+					<a href="#" data-toggle="tooltip" title="{{clase['nombre']}} &#013; Grupo: {{clase['grupo']}} &#013; Profesor: {{clase['profesor']}}">{{clase['codigo']}}</a>
 				</td>
 				{% endif %}
 				{% endfor %}
@@ -66,7 +74,7 @@
 				{% for clase in datos[dia] %}
 				{% if clase["horaInicio"] == i+0.5 %}
 				<td rowspan="{{clase['span']}}">
-					<a href="#" data-toggle="tooltip" title="{{clase['nombre']}}">{{clase['codigo']}}</a>
+					<a href="#" data-toggle="tooltip" title="{{clase['nombre']}} &#013; Grupo: {{clase['grupo']}} &#013; Profesor: {{clase['profesor']}}">{{clase['codigo']}}</a>
 				</td>
 				{% endif %}
 				{% endfor %}

@@ -76,8 +76,8 @@ def procesarCursos():
                        where d.id_profesor=e.id and d.id = f.id_curso")
     cursos = cur1.fetchall()
 
-    for i in cursos:
-        print(i)
+    # for i in cursos:
+    #     print(i)
 
     # Listas que contendran las clases que se dictan en dicho dia
     lunes = []
@@ -91,7 +91,7 @@ def procesarCursos():
     for curso in cursos:
         temp = {"codigo":curso[0],
                 "nombre":curso[1],
-                "grupo":"Grupo "+curso[2],
+                "grupo":curso[2],
                 "profesor":curso[3],
                 "horaInicio":curso[5],
                 "span":(curso[6]-curso[5])*2}
@@ -139,4 +139,4 @@ if(__name__ == "__main__"):
     if len(sys.argv) > 2 and sys.argv[1] == 'initdb':
         init_db()
 
-    app.run(host="127.0.0.1", port=5021)
+    app.run(host="127.0.0.1", port=5025)
