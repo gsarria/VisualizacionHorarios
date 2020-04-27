@@ -48,7 +48,7 @@
 	<tr>
 		<td><img src="../../../static/logo.png" width="313" height="159"></td>
 		<td width="20">&nbsp;</td>
-		<td><h4>Facultad de Ingeniería y Ciencias</h4></td>
+		<td><h4>Facultad de Ingeniería y Ciencias<br> Programa de Ingeniería de Sistemas y Computación</h4></td>
 	</tr>
 </table>
 <br>
@@ -74,8 +74,8 @@
 				<th>{{i}}:00</th>
 				{% for clase in datos[dia] %}
 				{% if clase["horaInicio"] == i+0.0 %}
-				<td rowspan="{{clase['span']}}" bgcolor="#00467c" class="white">
-					<a href="#" data-toggle="tooltip" title="{{clase['nombre']}} &#013; Grupo: {{clase['grupo']}} &#013; Profesor: {{clase['profesor']}}">{{clase['codigo']}}</a>
+				<td rowspan="{{clase['span']}}" bgcolor="#00467c">
+					<a href="#" style="color:white" data-toggle="tooltip" title="{{clase['nombre']}} &#013; Grupo: {{clase['grupo']}} &#013; Profesor: {{clase['profesor']}}">{{clase['codigo']}}</a>
 				</td>
 				{% endif %}
 				{% endfor %}
