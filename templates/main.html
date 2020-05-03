@@ -46,16 +46,28 @@
 <br>
 <table>
 	<tr>
-		<td><img src="../../../static/logo.png" width="313" height="159"></td>
+		<td><img src="../../../static/logo.png" width="157" height="80"></td>
 		<td width="20">&nbsp;</td>
-		<td><h4>Facultad de Ingeniería y Ciencias<br> Programa de Ingeniería de Sistemas y Computación</h4></td>
+		<td><h1>HORARIO SEMANAL</h1></td>
 	</tr>
 </table>
 <br>
 <br>
-<h1>HORARIO SEMANAL</h1>
 <br>
 <form name="forma" id="forma" action="{{ url_for('pagina_principal')}}" method=post>
+	Programa:
+	<select name="filtroPrograma">
+		{% for i in range(0,datos["programas"]|length) %}
+			{% if datos["programaActual"] == datos["programas"][i][0] %}
+  				<option value="{{datos["programas"][i][0]}}" selected>{{datos["programas"][i][1]}}</option>
+			{% else %}
+				<option value="{{datos["programas"][i][0]}}">{{datos["programas"][i][1]}}</option>
+			{% endif %}
+		{% endfor %}
+	</select>
+	<input type=submit value='Filtrar Programa'>
+	<br>
+	<br>
 	Semestre:
 	<select name="filtroSemestre">
 		{% if datos["semestre"] == 0 %}
@@ -71,7 +83,7 @@
 			{% endif %}
 		{% endfor %}
 	</select>
-	<input type=submit value='Filtrar'>
+	<input type=submit value='Filtrar Semestre'>
 	<br>
 	<br>
 	<div id="tabs">
