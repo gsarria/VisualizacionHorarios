@@ -4,17 +4,9 @@
 import flask
 import sqlite3
 import sys
-#from flask import Flask, request, g, redirect, url_for, \
-##    render_template, flash, session, send_from_directory, make_response
 
 app = flask.Flask(__name__)
 app.config.update(dict(
-    # Base de datos oficial
-    # DATABASE = '/home/abetpujc/abetpujc/abet.db',
-    # Para hacer pruebas
-    #DATABASE='/Users/gsarria/Dropbox/Work/ABETForm/github/abetpujc/abet.db',
-    #DATABASE='C:/Users/Usuario/Desktop/abetpujc-master/abet.db',
-
     DATABASE='cursos.db',
     SECRET_KEY='development key',
     USERNAME='admin',
@@ -74,15 +66,13 @@ def procesarCursos(filtroSemestre):
     if(filtroSemestre == 0):
         cur1 = db.execute("select d.codigo, d.nombre, d.grupo, e.nombre, f.dia, f.horainicio, f.horafin \
                            from curso as d, profesor as e, horario as f \
-                           where d.id_profesor=e.id and d.id = f.id_curso")
+                           where d.id_profesor = e.id and d.codigo = f.codigo_curso and d.grupo = f.grupo_curso")
     else:
         cur1 = db.execute("select d.codigo, d.nombre, d.grupo, e.nombre, f.dia, f.horainicio, f.horafin \
                            from curso as d, profesor as e, horario as f \
-                           where d.id_profesor=e.id and d.id = f.id_curso and d.semestre = ?",[filtroSemestre])
+                           where d.id_profesor = e.id and d.codigo = f.codigo_curso and d.grupo = f.grupo_curso \
+                           and d.semestre = ?",[filtroSemestre])
     cursos = cur1.fetchall()
-
-    # for i in cursos:
-    #     print(i)
 
     # Listas que contendran las clases que se dictan en dicho dia
     lunes = []
@@ -146,7 +136,4 @@ def pagina_principal():
 
 
 if(__name__ == "__main__"):
-    if len(sys.argv) > 2 and sys.argv[1] == 'initdb':
-        init_db()
-
-    app.run(host="127.0.0.1", port=5059)
+    app.run(host="127.0.0.1", port=5001)
