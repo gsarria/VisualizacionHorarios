@@ -3,18 +3,15 @@ import sqlite3
 from contextlib import closing
 
 # Base de datos oficial
-#DATABASE = '/home/abetpujc/abetpujc/abet.db'
-# Para hacer pruebas
 #DATABASE = '/Users/gsarria/Dropbox/Work/ABETForm/github/abetpujc/abet.db'
 #DATABASE = 'C:/Users/Usuario/Desktop/abetpujc-master/abet.db'
 DATABASE = 'cursos.db'
 
-#DATA_DATABASE = 'scripts/addData2db.sql'
-#DATA_DATABASE = 'C:/Users/Usuario/Desktop/abetpujc-master/scripts/addData2db.sql'
-DATA_DATABASE = 'scripts/addData2db.sql'
+#DATA_DATABASE = 'C:/Users/Usuario/Desktop/abetpujc-master/scripts/addData2db_main.sql'
+MAINDATA_DATABASE = 'scripts/addData2db_main.sql'
+HORARIOS_DATABASE = 'scripts/addData2db_horarios.sql'
 
-#ABET_DATABASE = 'scripts/DB_Abet_SQLite.sql'
-#ABET_DATABASE = 'C:/Users/Usuario/Desktop/abetpujc-master/scripts/DB_Abet_SQLite.sql'
+#ABET_DATABASE = 'C:/Users/Usuario/Desktop/abetpujc-master/scripts/DB_SQLite.sql'
 CURSOS_DATABASE = 'scripts/DB_SQLite.sql'
 
 
@@ -22,8 +19,15 @@ def connect_db():
     return sqlite3.connect(DATABASE)
 
 
-def add_data(db):
-    with open(DATA_DATABASE, mode='r') as f:
+def add_maindata(db):
+    with open(MAINDATA_DATABASE, mode='r') as f:
+        print("Filling DB")
+        db.executescript(f.read())
+    db.commit()
+
+
+def add_horarios(db):
+    with open(HORARIOS_DATABASE, mode='r') as f:
         print("Filling DB")
         db.executescript(f.read())
     db.commit()
@@ -34,7 +38,9 @@ def init_db():
         with open(CURSOS_DATABASE, mode='r') as f:
             print("Creating DB")
             db.executescript(f.read())
-            add_data(db)
+            add_maindata(db)
+            # El siguiente llamado a funcion solo se debe hacer si no hay otra fuente de datos para los horarios
+            add_horarios(db)
         db.commit()
 
 

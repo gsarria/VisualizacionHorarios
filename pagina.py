@@ -82,14 +82,16 @@ def procesarCursos(filtroSemestre, filtroPrograma):
 
     # Recupera (de la base de datos) los cursos, sus profesores y sus horarios
     if(filtroSemestre == 0):
-        cur1 = db.execute("select d.codigo, d.nombre, d.grupo, e.nombre, f.dia, f.horainicio, f.horafin \
-                           from curso as d, profesor as e, horario as f \
-                           where d.id_profesor = e.id and d.codigo = f.codigo_curso \
-                           and d.grupo = f.grupo_curso and d.id_carrera = ?",[filtroPrograma])
+        cur1 = db.execute("select d.codigo, d.nombre, g.grupo, e.nombre, f.dia, f.horainicio, f.horafin \
+                           from curso as d, profesor as e, horario as f, grupo_periodo as g \
+                           where g.id_profesor = e.id and g.codigo = f.codigo_curso \
+                           and g.grupo = f.grupo_curso and d.codigo = g.codigo \
+                           and d.id_carrera = ?",[filtroPrograma])
     else:
-        cur1 = db.execute("select d.codigo, d.nombre, d.grupo, e.nombre, f.dia, f.horainicio, f.horafin \
-                           from curso as d, profesor as e, horario as f \
-                           where d.id_profesor = e.id and d.codigo = f.codigo_curso and d.grupo = f.grupo_curso \
+        cur1 = db.execute("select d.codigo, d.nombre, g.grupo, e.nombre, f.dia, f.horainicio, f.horafin \
+                           from curso as d, profesor as e, horario as f, grupo_periodo as g \
+                           where g.id_profesor = e.id and g.codigo = f.codigo_curso \
+                           and g.grupo = f.grupo_curso and d.codigo = g.codigo \
                            and d.id_carrera = ? and d.semestre = ?",[filtroPrograma, filtroSemestre])
     cursos = cur1.fetchall()
 
@@ -158,4 +160,4 @@ def pagina_principal():
 
 
 if(__name__ == "__main__"):
-    app.run(host="127.0.0.1", port=5002)
+    app.run(host="127.0.0.1", port=5005)
