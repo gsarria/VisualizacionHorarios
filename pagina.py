@@ -4,6 +4,8 @@
 import flask
 import sqlite3
 import sys
+import xlrd
+import datetime
 
 app = flask.Flask(__name__)
 app.config.update(dict(
@@ -38,6 +40,60 @@ app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 ##                     {"dia":"jueves","horaInicio":14.0,"horaFin":16.0}],
 ##           "semestre":1,
 ##           "departamento":"DECC"}]
+
+def get_excel():
+    """
+    Función que abre los archivos excel correspondiente a los cursos y los organiza
+    :return:
+    """
+
+    # Se abre el archivo Super Excel
+    wbSuper = xlrd.open_workbook("excel/SuperXcel.xlsx")
+    sheetSuper = wbSuper.sheet_by_index(0)
+
+    # Se abre el archivo excel de la Facultad
+    wbFIC = xlrd.open_workbook("excel/AsignaturasFIC.xlsx")
+    sheetFIC = wbFIC.sheet_by_index(0)
+
+    # Se empieza a leer la información del Excel de la Facultad
+    # Sistemas es la columna 21 del Excel
+    for filaFIC in range(1,sheetFIC.nrows):
+        if(sheetFIC.cell_value(filaFIC, 21) != ''):
+            #print(sheetFIC.cell_value(fila, 3))
+
+            for filaSuper in range(1,sheetSuper.nrows):
+                if(sheetFIC.cell_value(filaFIC, 2) == sheetSuper.cell_value(filaSuper, 4) and \
+                        (sheetSuper.cell_value(filaSuper, 2) == "DEP-CIC" or \
+                         sheetSuper.cell_value(filaSuper, 2) == "DEP-CNMT")):
+                    # Código del curso
+                    print("Codigo: " + sheetSuper.cell_value(filaSuper, 4))
+                    # Código del curso
+                    print("Nombre: " + sheetSuper.cell_value(filaSuper, 6))
+                    # Grupo
+                    print("Grupo: " + sheetSuper.cell_value(filaSuper, 5))
+                    # ID del profesor
+                    print("Profesor: " + sheetSuper.cell_value(filaSuper, 8))
+                    # Dia
+                    print("Dia: " + sheetSuper.cell_value(filaSuper, 15))
+                    # Hora inicio
+                    tmp = sheetSuper.cell_value(filaSuper, 16)
+                    hora = xlrd.xldate.xldate_as_datetime(tmp, wbSuper.datemode).time().hour
+                    minuto = xlrd.xldate.xldate_as_datetime(tmp, wbSuper.datemode).time().minute
+                    if(minuto == 30):
+                        hora = hora + 0.5
+                    else:
+                        hora = hora + 0.0
+                    print("Hora inicio: " + str(hora))
+                    # Hora final
+                    tmp = sheetSuper.cell_value(filaSuper, 17)
+                    hora = xlrd.xldate.xldate_as_datetime(tmp, wbSuper.datemode).time().hour
+                    minuto = xlrd.xldate.xldate_as_datetime(tmp, wbSuper.datemode).time().minute
+                    if (minuto == 30):
+                        hora = hora + 0.5
+                    else:
+                        hora = hora + 0.0
+                    print("Hora inicio: " + str(hora))
+
 
 def connect_db():
     return sqlite3.connect(app.config['DATABASE'])
@@ -138,6 +194,8 @@ def pagina_principal():
     Salida: La página web
     """
 
+    get_excel()
+
     filtroSemestre = 0
     filtroPrograma = 40
     if flask.request.method == 'POST':
@@ -160,4 +218,4 @@ def pagina_principal():
 
 
 if(__name__ == "__main__"):
-    app.run(host="127.0.0.1", port=5005)
+    app.run(host="127.0.0.1", port=5007, debug=True)
