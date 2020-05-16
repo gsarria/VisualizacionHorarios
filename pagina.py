@@ -62,7 +62,7 @@ def procesarProgramas():
     db = get_db()
 
     # Recupera (de la base de datos) los programas
-    cur1 = db.execute("select id_carrera, nombre_carrera from definicion")
+    cur1 = db.execute("select id_carrera, nombre_carrera from programa")
     programas = cur1.fetchall()
 
     # Retorna los programas encontrados en la base de datos
@@ -73,6 +73,7 @@ def procesarCursos(filtroSemestre, filtroPrograma):
     Función que procesa la información de la base de datos correspondiente a los cursos,
         transformándola en datos para enviar a la página.
     Entrada: filtroSemestre, variable que representa qué semestre se escogió para visualizar los cursos.
+             filtroPrograma, variable que representa qué programa se escogió para visualizar los cursos.
     Salida: Datos procesados.
     """
 
@@ -157,4 +158,4 @@ def pagina_principal():
 
 
 if(__name__ == "__main__"):
-    app.run(host="127.0.0.1", port=5013)
+    app.run(host="127.0.0.1", port=5002)

@@ -4,13 +4,25 @@ BEGIN TRANSACTION;
 /*----------*/
 /* Carreras */
 /*----------*/
-insert into definicion values (40,'Ingeniería de Sistemas y Computación','2020-1',1008);
-insert into definicion values (120001,'Diseño de Comunicación Visual','2020-1',1008);
+insert into programa values (40,'Ingeniería de Sistemas y Computación');
+insert into programa values (120001,'Diseño de Comunicación Visual');
+
+/*---------------------*/
+/* Periodos Académicos */
+/*---------------------*/
+insert into periodo_academico values (1008,'2020-1');
+
+/*---------------------*/
+/* Programas X Periodo */
+/*---------------------*/
+insert into programa_periodo values (40,1008);
+insert into programa_periodo values (120001,1008);
 
 /*------------*/
 /* Profesores */
 /*------------*/
 insert into profesor values (0000000,'Sin Asignar',NULL);
+
 insert into profesor values (0012941,'Gerardo M. Sarria M.','TC');
 insert into profesor values (0058801,'Juan Carlos Martínez Arias','TC');
 insert into profesor values (00020148119,'Carlos Alberto Ramírez Restrepo','TC');
@@ -38,6 +50,25 @@ insert into profesor values (0183485,'Claudia Patricia Oviedo Santacruz','HC');
 insert into profesor values (0015793,'Carlos Ernesto Ramirez Ovalle','HC');
 insert into profesor values (0001348,'Luis Eduardo Fuertes Muñoz','HC');
 insert into profesor values (00020052641,'Alexander Yela','HC');
+
+insert into profesor values (00020392,'Alioka Itare Quintero Ospino',NULL);
+insert into profesor values (0056438,'Adriana Gastaldi Calero',NULL);
+insert into profesor values (0071603,'Ángela María Sánchez Gómez',NULL);
+insert into profesor values (00020072,'Juan Jose Ocampo Bejarano',NULL);
+insert into profesor values (00020313,'Lorena Medina Beltran',NULL);
+insert into profesor values (00020033,'Vanesa Franco Muñoz',NULL);
+insert into profesor values (0060657,'Fernando Arboleda Aparicio',NULL);
+insert into profesor values (3197501,'Elingth Simone Rosales Marquina',NULL);
+insert into profesor values (00020354,'Sebero Emilio Ugarte Calleja',NULL);
+insert into profesor values (0065122,'Carlos Andres Carrillo Escarraga',NULL);
+insert into profesor values (0071531,'Paola Andrea Cano Molina',NULL);
+insert into profesor values (0051758,'Juan Carlos Londoño R.',NULL);
+insert into profesor values (0061415,'Carlos Andres Ortega Garcia',NULL);
+insert into profesor values (0063998,'Diana Patricia Umaña Ruiz',NULL);
+insert into profesor values (00020284,'Andrea Lucía Medina Gómez',NULL);
+insert into profesor values (0069398,'Maria Paz Velez Gil',NULL);
+insert into profesor values (0061548,'Diego Fernando Bolaños Diaz',NULL);
+
 
 
 /*-----------------------------------------------------------*/
@@ -219,9 +250,95 @@ insert into horario values ('300CID002','A',"Jueves",18.0,21.0);
 /*-----------------------------------------------------------*/
 /*-----------------------------------------------------------*/
 
-/* PLAN NUEVO */
-insert into curso values ('300CMG040','A','Historia de la Comunicación Visual',120001,0000000,1008,1);
+insert into curso values ('300CMM015','AA','Imagen Dibujo y Texto Digital',120001,00020392,1008,1);
+insert into horario values ('300CMM015','AA',"Martes",7.0,9.0);
+insert into horario values ('300CMM015','AA',"Viernes",14.0,18.0);
+
+insert into curso values ('300CMM015','DA','Imagen Dibujo y Texto Digital',120001,0056438,1008,1);
+insert into horario values ('300CMM015','DA',"Lunes",7.0,10.0);
+insert into horario values ('300CMM015','DA',"Miércoles",7.0,10.0);
+
+insert into curso values ('300CMM015','DB','Imagen Dibujo y Texto Digital',120001,0056438,1008,1);
+insert into horario values ('300CMM015','DB',"Lunes",10.0,13.0);
+insert into horario values ('300CMM015','DB',"Miércoles",10.0,13.0);
+
+insert into curso values ('300CMM015','DC','Imagen Dibujo y Texto Digital',120001,0071603,1008,1);
+insert into horario values ('300CMM015','DC',"Martes",7.0,11.0);
+insert into horario values ('300CMM015','DC',"Viernes",14.0,16.0);
+
+insert into curso values ('300ARA001','DA','Dibujo I',120001,00020072,1008,1);
+insert into horario values ('300ARA001','DA',"Miércoles",14.0,18.0);
+
+insert into curso values ('300ARA001','DB','Dibujo I',120001,00020072,1008,1);
+insert into horario values ('300ARA001','DB',"Jueves",14.0,18.0);
+
+insert into curso values ('300ARA001','DC','Dibujo I',120001,00020313,1008,1);
+insert into horario values ('300ARA001','DC',"Jueves",9.0,13.0);
+
+insert into curso values ('300CMG040','A','Historia de la Comunicación Visual',120001,00020033,1008,1);
 insert into horario values ('300CMG040','A',"Viernes",7.0,10.0);
+
+insert into curso values ('300CMG040','B','Historia de la Comunicación Visual',120001,00020033,1008,1);
+insert into horario values ('300CMG040','B',"Viernes",10.0,13.0);
+
+insert into curso values ('300CMO010','A','Diseño 2D',120001,0060657,1008,1);
+insert into horario values ('300CMO010','A',"Lunes",10.0,13.0);
+insert into horario values ('300CMO010','A',"Jueves",10.0,13.0);
+
+insert into curso values ('300CMO010','B','Diseño 2D',120001,0060657,1008,1);
+insert into horario values ('300CMO010','B',"Lunes",7.0,10.0);
+insert into horario values ('300CMO010','B',"Miércoles",7.0,10.0);
+
+insert into curso values ('300ARA005','DB','Teoría del Color',120001,3197501,1008,1);
+insert into horario values ('300ARA005','DB',"Jueves",14.0,18.0);
+
+insert into curso values ('300ARA005','DC','Teoría del Color',120001,00020354,1008,1);
+insert into horario values ('300ARA005','DC',"Martes",14.0,18.0);
+
+insert into curso values ('300CMM017','A','La Imagen para Comunicación Visual',120001,0065122,1008,2);
+insert into horario values ('300CMM017','A',"Miércoles",14.0,17.0);
+insert into horario values ('300CMM017','A',"Jueves",7.0,10.0);
+
+insert into curso values ('300CMM017','B','La Imagen para Comunicación Visual',120001,0065122,1008,2);
+insert into horario values ('300CMM017','B',"Martes",10.0,13.0);
+insert into horario values ('300CMM017','B',"Jueves",10.0,13.0);
+
+insert into curso values ('300ARA011','A','Dibujo para Diseño Gráfico',120001,00020072,1008,2);
+insert into horario values ('300ARA011','A',"Lunes",14.0,17.0);
+insert into horario values ('300ARA011','A',"Martes",7.0,10.0);
+
+insert into curso values ('300ARA011','B','Dibujo para Diseño Gráfico',120001,00020313,1008,2);
+insert into horario values ('300ARA011','B',"Lunes",10.0,13.0);
+insert into horario values ('300ARA011','B',"Viernes",7.0,10.0);
+
+insert into curso values ('300ARA011','C','Dibujo para Diseño Gráfico',120001,00020313,1008,2);
+insert into horario values ('300ARA011','C',"Lunes",14.0,17.0);
+insert into horario values ('300ARA011','C',"Martes",7.0,10.0);
+
+insert into curso values ('300CMM016','B','Estudios de la Imagen',120001,0071531,1008,2);
+insert into horario values ('300CMM016','B',"Viernes",10.0,13.0);
+
+insert into curso values ('300ARG006','A','Arte Clásico y Diseño',120001,0051758,1008,2);
+insert into horario values ('300ARG006','A',"Miércoles",7.0,10.0);
+
+insert into curso values ('300ARG006','B','Arte Clásico y Diseño',120001,0061415,1008,2);
+insert into horario values ('300ARG006','B',"Miércoles",10.0,13.0);
+
+insert into curso values ('300CMO011','A','Diseño 3D',120001,0063998,1008,2);
+insert into horario values ('300CMO011','A',"Lunes",7.0,10.0);
+insert into horario values ('300CMO011','A',"Jueves",10.0,13.0);
+
+insert into curso values ('300CMO011','B','Diseño 3D',120001,00020284,1008,2);
+insert into horario values ('300CMO011','B',"Lunes",10.0,13.0);
+insert into horario values ('300CMO011','B',"Jueves",14.0,17.0);
+
+insert into curso values ('300CMO012','A','Tipografía I: Principios',120001,0069398,1008,2);
+insert into horario values ('300CMO012','A',"Martes",10.0,13.0);
+insert into horario values ('300CMO012','A',"Viernes",14.0,17.0);
+
+insert into curso values ('300CMO012','B','Tipografía I: Principios',120001,0061548,1008,2);
+insert into horario values ('300CMO012','B',"Lunes",7.0,10.0);
+insert into horario values ('300CMO012','B',"Miércoles",7.0,10.0);
 
 
 COMMIT;
