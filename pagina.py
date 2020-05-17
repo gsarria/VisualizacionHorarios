@@ -53,6 +53,20 @@ def get_db():
         flask.g.sqlite_db = connect_db()
     return flask.g.sqlite_db
 
+def store_Profesores(db, sheetSuper):
+    """
+    Procedimiento que almacena la información de los profesores en la base de datos
+    Entradas: db, la base de datos
+              sheetSuper, la hoja de cálculo
+    Salida: Base de datos actualizada
+    """
+    for filaSuper in range(1,sheetSuper.nrows):
+        id_profesor = sheetSuper.cell_value(filaSuper, 8)
+        nombre_profesor = sheetSuper.cell_value(filaSuper, 9)
+        if not db.execute("select id from profesor where id = ?", [id_profesor]).fetchall():
+            db.execute("insert into profesor values (?,?,NULL)", [id_profesor, nombre_profesor])
+        db.commit()
+
 def estandarizar(curso):
     """
     Función que estandariza el formato del código del curso para poder comparar
@@ -64,25 +78,16 @@ def estandarizar(curso):
     else:
         return curso
 
-def get_excel():
+def store_Horarios(db, wbSuper, sheetSuper, sheetFIC, filtroPrograma):
     """
-    Función que abre los archivos excel correspondiente a los cursos, organiza su información
-    y la almacena en la base de datos
-    Entradas: La información de los archivos excel
+    Procedimiento que almacena la información de los horarios en la base de datos
+    Entradas: db, la base de datos
+              wbSuper, el libro del archivo superXcel
+              sheetSuper, la hoja de cálculo de todos cursos de la Universidad
+              sheetFIC, la hoja de cálculo de los cursos de la Facultad
+              filtroPrograma, el programa que debe ser almacenado
     Salida: Base de datos actualizada
     """
-
-    # Accede a la base de datos
-    db = get_db()
-
-    # Se abre el archivo Super Excel
-    wbSuper = xlrd.open_workbook("excel/SuperXcel.xlsx")
-    sheetSuper = wbSuper.sheet_by_index(0)
-
-    # Se abre el archivo excel de la Facultad
-    wbFIC = xlrd.open_workbook("excel/AsignaturasFIC.xlsx")
-    sheetFIC = wbFIC.sheet_by_index(0)
-
     # Se empieza a leer la información del Excel de la Facultad
     # Sistemas es la columna 21 del Excel
     for filaFIC in range(1,sheetFIC.nrows):
@@ -146,17 +151,41 @@ def get_excel():
                     if not db.execute("select codigo from grupo_periodo \
                                 where codigo = ? and grupo = ? and id_carrera = 40 and id_profesor = ? \
                                 and codigo_periodo = 1008",[codigo, grupo, id_profesor]).fetchall():
-                        db.execute("insert into grupo_periodo values (?,?,40,?,1008)",[codigo, grupo, id_profesor])
+                        db.execute("insert into grupo_periodo values (?,?,?,?,1008)",[codigo, grupo, filtroPrograma,id_profesor])
 
                     if not db.execute("select codigo_curso from horario \
                                 where codigo_curso = ? and grupo_curso = ? and dia = ? and horainicio = ? \
                                 and horafin = ?",[codigo, grupo, dia, hora_inicio, hora_final]).fetchall():
                         db.execute("insert into horario values (?,?,?,?,?)",[codigo, grupo, dia, hora_inicio, hora_final])
 
-                    if not db.execute("select id from profesor where id = ?",[id_profesor]).fetchall():
-                        db.execute("insert into profesor values (?,?,NULL)",[id_profesor, nombre_profesor])
-
                     db.commit()
+
+
+def get_excel(filtroPrograma):
+    """
+    Procedimiento que abre los archivos excel correspondiente a los cursos, organiza su información
+    y la almacena en la base de datos
+    Entradas: La información de los archivos excel
+    Salida: Base de datos actualizada
+    """
+
+    # Accede a la base de datos
+    db = get_db()
+
+    # Se abre el archivo Super Excel
+    wbSuper = xlrd.open_workbook("excel/SuperXcel.xlsx")
+    sheetSuper = wbSuper.sheet_by_index(0)
+
+    # Se abre el archivo excel de la Facultad
+    wbFIC = xlrd.open_workbook("excel/AsignaturasFIC.xlsx")
+    sheetFIC = wbFIC.sheet_by_index(0)
+
+    # Almacena la información de los profesores
+    store_Profesores(db,sheetSuper)
+
+    # Almacena la información de los horarios
+    store_Horarios(db,wbSuper,sheetSuper,sheetFIC,filtroPrograma)
+
 
 
 
@@ -203,15 +232,6 @@ def procesarCursos(filtroSemestre, filtroPrograma):
                            and g.grupo = f.grupo_curso and d.codigo = g.codigo \
                            and d.id_carrera = ? and d.semestre = ?",[filtroPrograma, filtroSemestre])
     cursos = cur1.fetchall()
-    #print(cursos)
-    # cur2 = db.execute("select * from curso").fetchone()
-    # print(cur2)
-    # cur2 = db.execute("select * from profesor").fetchall()
-    # print(cur2)
-    # cur2 = db.execute("select * from grupo_periodo").fetchall()
-    # print(cur2)
-    # cur2 = db.execute("select * from horario").fetchall()
-    # print(cur2)
 
     # Listas que contendran las clases que se dictan en dicho dia
     lunes = []
@@ -256,17 +276,23 @@ def pagina_principal():
     Salida: La página web
     """
 
-    get_excel()
-
+    # Se procesan los filtros de la página
     filtroSemestre = 0
     filtroPrograma = 40
     if flask.request.method == 'POST':
         filtroSemestre = int(flask.request.form["filtroSemestre"])
         filtroPrograma = int(flask.request.form["filtroPrograma"])
 
+    # Almacena la información de los archivos excel en la base de datos
+    get_excel(filtroPrograma)
+
+    # Recupera la información de los cursos
     datos = procesarCursos(filtroSemestre,filtroPrograma)
+
+    # Recupera la información de los programas
     programas = procesarProgramas()
-    
+
+    # Retorna la página web completada
     return flask.render_template("main.html",datos={"Lunes":datos[0],
                                                     "Martes":datos[1],
                                                     "Miercoles":datos[2],
@@ -278,6 +304,6 @@ def pagina_principal():
                                                     "programaActual":filtroPrograma,
                                                     "programas":programas})
 
-
+# Si se llama la aplicación directamente desde python
 if(__name__ == "__main__"):
     app.run(host="127.0.0.1", port=5016, debug=True)
