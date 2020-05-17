@@ -40,7 +40,7 @@ def init_db():
             db.executescript(f.read())
             add_maindata(db)
             # El siguiente llamado a funcion solo se debe hacer si no hay otra fuente de datos para los horarios
-            add_horarios(db)
+            #add_horarios(db)
         db.commit()
 
 

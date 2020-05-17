@@ -41,11 +41,26 @@ app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 ##           "semestre":1,
 ##           "departamento":"DECC"}]
 
+def connect_db():
+    return sqlite3.connect(app.config['DATABASE'])
+
+def get_db():
+    """
+    Opens a new database connection if there is none yet for the
+    current application context.
+    """
+    if not hasattr(flask.g, 'sqlite_db'):
+        flask.g.sqlite_db = connect_db()
+    return flask.g.sqlite_db
+
 def get_excel():
     """
     Función que abre los archivos excel correspondiente a los cursos y los organiza
     :return:
     """
+
+    # Accede a la base de datos
+    db = get_db()
 
     # Se abre el archivo Super Excel
     wbSuper = xlrd.open_workbook("excel/SuperXcel.xlsx")
@@ -59,22 +74,29 @@ def get_excel():
     # Sistemas es la columna 21 del Excel
     for filaFIC in range(1,sheetFIC.nrows):
         if(sheetFIC.cell_value(filaFIC, 21) != ''):
-            #print(sheetFIC.cell_value(fila, 3))
 
+            # Se hace la comparación con los registros del SuperXcel
             for filaSuper in range(1,sheetSuper.nrows):
                 if(sheetFIC.cell_value(filaFIC, 2) == sheetSuper.cell_value(filaSuper, 4) and \
                         (sheetSuper.cell_value(filaSuper, 2) == "DEP-CIC" or \
                          sheetSuper.cell_value(filaSuper, 2) == "DEP-CNMT")):
                     # Código del curso
-                    print("Codigo: " + sheetSuper.cell_value(filaSuper, 4))
+                    #print("Codigo: " + sheetSuper.cell_value(filaSuper, 4))
+                    codigo = sheetSuper.cell_value(filaSuper, 4)
+                    if(codigo[0] == ' '):
+                        codigo = sheetSuper.cell_value(filaSuper, 4)[1:]
                     # Código del curso
                     print("Nombre: " + sheetSuper.cell_value(filaSuper, 6))
                     # Grupo
-                    print("Grupo: " + sheetSuper.cell_value(filaSuper, 5))
+                    #print("Grupo: " + sheetSuper.cell_value(filaSuper, 5))
+                    grupo = sheetSuper.cell_value(filaSuper, 5)
                     # ID del profesor
-                    print("Profesor: " + sheetSuper.cell_value(filaSuper, 8))
+                    #print("Profesor: " + sheetSuper.cell_value(filaSuper, 8))
+                    id_profesor = sheetSuper.cell_value(filaSuper, 8)
+                    nombre_profesor = sheetSuper.cell_value(filaSuper, 9)
                     # Dia
-                    print("Dia: " + sheetSuper.cell_value(filaSuper, 15))
+                    #print("Dia: " + sheetSuper.cell_value(filaSuper, 15))
+                    dia = sheetSuper.cell_value(filaSuper, 15)
                     # Hora inicio
                     tmp = sheetSuper.cell_value(filaSuper, 16)
                     hora = xlrd.xldate.xldate_as_datetime(tmp, wbSuper.datemode).time().hour
@@ -83,7 +105,8 @@ def get_excel():
                         hora = hora + 0.5
                     else:
                         hora = hora + 0.0
-                    print("Hora inicio: " + str(hora))
+                    #print("Hora inicio: " + str(hora))
+                    hora_inicio = hora
                     # Hora final
                     tmp = sheetSuper.cell_value(filaSuper, 17)
                     hora = xlrd.xldate.xldate_as_datetime(tmp, wbSuper.datemode).time().hour
@@ -92,20 +115,26 @@ def get_excel():
                         hora = hora + 0.5
                     else:
                         hora = hora + 0.0
-                    print("Hora inicio: " + str(hora))
+                    #print("Hora inicio: " + str(hora))
+                    hora_final = hora
+
+                    # Inserta los registros en las tablas
+                    if not db.execute("select codigo from grupo_periodo \
+                                where codigo = ? and grupo = ? and id_carrera = 40 and id_profesor = ? \
+                                and codigo_periodo = 1008",[codigo, grupo, id_profesor]).fetchall():
+                        db.execute("insert into grupo_periodo values (?,?,40,?,1008)",[codigo, grupo, id_profesor])
+
+                    if not db.execute("select codigo_curso from horario \
+                                where codigo_curso = ? and grupo_curso = ? and dia = ? and horainicio = ? \
+                                and horafin = ?",[codigo, grupo, dia, hora_inicio, hora_final]).fetchall():
+                        db.execute("insert into horario values (?,?,?,?,?)",[codigo, grupo, dia, hora_inicio, hora_final])
+
+                    if not db.execute("select id from profesor where id = ?",[id_profesor]).fetchall():
+                        db.execute("insert into profesor values (?,?,NULL)",[id_profesor, nombre_profesor])
+
+                    db.commit()
 
 
-def connect_db():
-    return sqlite3.connect(app.config['DATABASE'])
-
-def get_db():
-    """
-    Opens a new database connection if there is none yet for the
-    current application context.
-    """
-    if not hasattr(flask.g, 'sqlite_db'):
-        flask.g.sqlite_db = connect_db()
-    return flask.g.sqlite_db
 
 def procesarProgramas():
     """
@@ -150,6 +179,15 @@ def procesarCursos(filtroSemestre, filtroPrograma):
                            and g.grupo = f.grupo_curso and d.codigo = g.codigo \
                            and d.id_carrera = ? and d.semestre = ?",[filtroPrograma, filtroSemestre])
     cursos = cur1.fetchall()
+    #print(cursos)
+    # cur2 = db.execute("select * from curso").fetchone()
+    # print(cur2)
+    # cur2 = db.execute("select * from profesor").fetchall()
+    # print(cur2)
+    # cur2 = db.execute("select * from grupo_periodo").fetchall()
+    # print(cur2)
+    # cur2 = db.execute("select * from horario").fetchall()
+    # print(cur2)
 
     # Listas que contendran las clases que se dictan en dicho dia
     lunes = []
@@ -172,13 +210,13 @@ def procesarCursos(filtroSemestre, filtroPrograma):
             lunes.append(temp)
         elif(curso[4] == "Martes"):
             martes.append(temp)
-        elif(curso[4] == "Miércoles"):
+        elif(curso[4] == "Miercoles"):
             miercoles.append(temp)
         elif(curso[4] == "Jueves"):
             jueves.append(temp)
         elif(curso[4] == "Viernes"):
             viernes.append(temp)
-        elif(curso[4] == "Sábado"):
+        elif(curso[4] == "Sabado"):
             sabado.append(temp)
         else:
             domingo.append(temp)
@@ -218,4 +256,4 @@ def pagina_principal():
 
 
 if(__name__ == "__main__"):
-    app.run(host="127.0.0.1", port=5007, debug=True)
+    app.run(host="127.0.0.1", port=5016, debug=True)

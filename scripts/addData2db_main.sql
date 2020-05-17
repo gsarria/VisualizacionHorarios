@@ -21,6 +21,7 @@ insert into programa_periodo values (120001,1008);
 /*------------*/
 /* Profesores */
 /*------------*/
+/*
 insert into profesor values (0000000,'Sin Asignar',NULL);
 
 insert into profesor values (0012941,'Gerardo M. Sarria M.','TC');
@@ -68,7 +69,7 @@ insert into profesor values (0063998,'Diana Patricia Umaña Ruiz',NULL);
 insert into profesor values (00020284,'Andrea Lucía Medina Gómez',NULL);
 insert into profesor values (0069398,'Maria Paz Velez Gil',NULL);
 insert into profesor values (0061548,'Diego Fernando Bolaños Diaz',NULL);
-
+*/
 
 
 /*------------------------------------------------*/
