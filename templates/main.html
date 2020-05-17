@@ -114,8 +114,8 @@
 					<th>{{i}}:30</th>
 					{% for clase in datos[dia] %}
 					{% if clase["horaInicio"] == i+0.5 %}
-					<td rowspan="{{clase['span']}}">
-						<a href="#" data-toggle="tooltip" title="{{clase['nombre']}} &#013; Grupo: {{clase['grupo']}} &#013; Profesor: {{clase['profesor']}}">{{clase['codigo']}}</a>
+					<td rowspan="{{clase['span']}}" bgcolor="#00467c">
+						<a href="#" style="color:white" data-toggle="tooltip" title="{{clase['nombre']}} &#013; Grupo: {{clase['grupo']}} &#013; Profesor: {{clase['profesor']}}">{{clase['codigo']}}</a>
 					</td>
 					{% endif %}
 					{% endfor %}

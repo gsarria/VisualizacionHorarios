@@ -53,10 +53,23 @@ def get_db():
         flask.g.sqlite_db = connect_db()
     return flask.g.sqlite_db
 
+def estandarizar(curso):
+    """
+    Función que estandariza el formato del código del curso para poder comparar
+    Entradas: curso, texto que representa el código del curso
+    Salida: el código estandarizado
+    """
+    if(curso[0] != ' '):
+        return ' '+curso
+    else:
+        return curso
+
 def get_excel():
     """
-    Función que abre los archivos excel correspondiente a los cursos y los organiza
-    :return:
+    Función que abre los archivos excel correspondiente a los cursos, organiza su información
+    y la almacena en la base de datos
+    Entradas: La información de los archivos excel
+    Salida: Base de datos actualizada
     """
 
     # Accede a la base de datos
@@ -74,10 +87,10 @@ def get_excel():
     # Sistemas es la columna 21 del Excel
     for filaFIC in range(1,sheetFIC.nrows):
         if(sheetFIC.cell_value(filaFIC, 21) != ''):
-
+            curso = estandarizar(sheetFIC.cell_value(filaFIC, 2))
             # Se hace la comparación con los registros del SuperXcel
             for filaSuper in range(1,sheetSuper.nrows):
-                if(sheetFIC.cell_value(filaFIC, 2) == sheetSuper.cell_value(filaSuper, 4) and \
+                if(curso == sheetSuper.cell_value(filaSuper, 4) and \
                         (sheetSuper.cell_value(filaSuper, 2) == "DEP-CIC" or \
                          sheetSuper.cell_value(filaSuper, 2) == "DEP-CNMT")):
                     # Código del curso
@@ -85,8 +98,8 @@ def get_excel():
                     codigo = sheetSuper.cell_value(filaSuper, 4)
                     if(codigo[0] == ' '):
                         codigo = sheetSuper.cell_value(filaSuper, 4)[1:]
-                    # Código del curso
-                    print("Nombre: " + sheetSuper.cell_value(filaSuper, 6))
+                    # Nombre del curso
+                    #print("Nombre: " + sheetSuper.cell_value(filaSuper, 6))
                     # Grupo
                     #print("Grupo: " + sheetSuper.cell_value(filaSuper, 5))
                     grupo = sheetSuper.cell_value(filaSuper, 5)
@@ -97,24 +110,35 @@ def get_excel():
                     # Dia
                     #print("Dia: " + sheetSuper.cell_value(filaSuper, 15))
                     dia = sheetSuper.cell_value(filaSuper, 15)
+                    if(dia == 'Verificar'):
+                        # Si en el superXcel no hay un dia establecido se poner este por defecto
+                        dia = 'Domingo'
                     # Hora inicio
                     tmp = sheetSuper.cell_value(filaSuper, 16)
-                    hora = xlrd.xldate.xldate_as_datetime(tmp, wbSuper.datemode).time().hour
-                    minuto = xlrd.xldate.xldate_as_datetime(tmp, wbSuper.datemode).time().minute
-                    if(minuto == 30):
-                        hora = hora + 0.5
+                    if(tmp == ''):
+                        # Si en el superXcel no hay un horario establecido se poner este por defecto
+                        hora = 7.0
                     else:
-                        hora = hora + 0.0
+                        hora = xlrd.xldate.xldate_as_datetime(tmp, wbSuper.datemode).time().hour
+                        minuto = xlrd.xldate.xldate_as_datetime(tmp, wbSuper.datemode).time().minute
+                        if(minuto == 30):
+                            hora = hora + 0.5
+                        else:
+                            hora = hora + 0.0
                     #print("Hora inicio: " + str(hora))
                     hora_inicio = hora
                     # Hora final
                     tmp = sheetSuper.cell_value(filaSuper, 17)
-                    hora = xlrd.xldate.xldate_as_datetime(tmp, wbSuper.datemode).time().hour
-                    minuto = xlrd.xldate.xldate_as_datetime(tmp, wbSuper.datemode).time().minute
-                    if (minuto == 30):
-                        hora = hora + 0.5
+                    if(tmp == ''):
+                        # Si en el superXcel no hay un horario establecido se poner este por defecto
+                        hora = 9.0
                     else:
-                        hora = hora + 0.0
+                        hora = xlrd.xldate.xldate_as_datetime(tmp, wbSuper.datemode).time().hour
+                        minuto = xlrd.xldate.xldate_as_datetime(tmp, wbSuper.datemode).time().minute
+                        if (minuto == 30):
+                            hora = hora + 0.5
+                        else:
+                            hora = hora + 0.0
                     #print("Hora inicio: " + str(hora))
                     hora_final = hora
 
@@ -139,7 +163,7 @@ def get_excel():
 def procesarProgramas():
     """
     Función que extrae de la base de datos la información de los programas académicos.
-    Entrada: Ninguna.
+    Entradas: Ninguna.
     Salida: Datos procesados.
     """
 
@@ -157,8 +181,8 @@ def procesarCursos(filtroSemestre, filtroPrograma):
     """
     Función que procesa la información de la base de datos correspondiente a los cursos,
         transformándola en datos para enviar a la página.
-    Entrada: filtroSemestre, variable que representa qué semestre se escogió para visualizar los cursos.
-             filtroPrograma, variable que representa qué programa se escogió para visualizar los cursos.
+    Entradas: filtroSemestre, variable que representa qué semestre se escogió para visualizar los cursos.
+              filtroPrograma, variable que representa qué programa se escogió para visualizar los cursos.
     Salida: Datos procesados.
     """
 
