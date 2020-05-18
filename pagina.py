@@ -248,8 +248,6 @@ def get_excel(filtroPrograma):
     store_Horarios(db,wbSuper,sheetSuper,sheetFIC,filtroPrograma)
 
 
-
-
 def procesarProgramas():
     """
     Función que extrae de la base de datos la información de los programas académicos.
