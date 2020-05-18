@@ -283,13 +283,13 @@ def procesarCursos(filtroSemestre, filtroPrograma):
         cur1 = db.execute("select d.codigo, d.nombre, g.grupo, e.nombre, f.dia, f.horainicio, f.horafin \
                            from curso as d, profesor as e, horario as f, grupo_periodo as g \
                            where g.id_profesor = e.id and g.codigo = f.codigo_curso \
-                           and g.grupo = f.grupo_curso and d.codigo = g.codigo \
+                           and g.grupo = f.grupo_curso and d.codigo = g.codigo and d.id_carrera = g.id_carrera \
                            and d.id_carrera = ?",[filtroPrograma])
     else:
         cur1 = db.execute("select d.codigo, d.nombre, g.grupo, e.nombre, f.dia, f.horainicio, f.horafin \
                            from curso as d, profesor as e, horario as f, grupo_periodo as g \
                            where g.id_profesor = e.id and g.codigo = f.codigo_curso \
-                           and g.grupo = f.grupo_curso and d.codigo = g.codigo \
+                           and g.grupo = f.grupo_curso and d.codigo = g.codigo and d.id_carrera = g.id_carrera \
                            and d.id_carrera = ? and d.semestre = ?",[filtroPrograma, filtroSemestre])
     cursos = cur1.fetchall()
 
