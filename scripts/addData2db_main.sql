@@ -4,8 +4,15 @@ BEGIN TRANSACTION;
 /*----------*/
 /* Carreras */
 /*----------*/
+insert into programa values (10,'Ingeniería Industrial');
+insert into programa values (20,'Ingeniería Civil');
+insert into programa values (30,'Ingeniería Electrónica');
 insert into programa values (40,'Ingeniería de Sistemas y Computación');
-insert into programa values (120001,'Diseño de Comunicación Visual');
+insert into programa values (10001,'Matemáticas Aplicadas');
+insert into programa values (10002,'Biología');
+insert into programa values (10003,'Ingeniería Mecánica');
+insert into programa values (10004,'Ingeniería Biomédica');
+/*insert into programa values (120001,'Diseño de Comunicación Visual');*/
 
 /*---------------------*/
 /* Periodos Académicos */
@@ -15,8 +22,15 @@ insert into periodo_academico values (1008,'2020-1');
 /*---------------------*/
 /* Programas X Periodo */
 /*---------------------*/
+insert into programa_periodo values (10,1008);
+insert into programa_periodo values (20,1008);
+insert into programa_periodo values (30,1008);
 insert into programa_periodo values (40,1008);
-insert into programa_periodo values (120001,1008);
+insert into programa_periodo values (10001,1008);
+insert into programa_periodo values (10002,1008);
+insert into programa_periodo values (10003,1008);
+insert into programa_periodo values (10004,1008);
+/*insert into programa_periodo values (120001,1008);*/
 
 /*------------*/
 /* Profesores */
@@ -79,6 +93,7 @@ insert into profesor values (0061548,'Diego Fernando Bolaños Diaz',NULL);
 /*------------------------------------------------*/
 
 /* PLAN NUEVO */
+/*
 insert into curso values ('300ITA001','Introducción al Modelado de Sistemas',40,1);
 insert into curso values ('300CIG039','Herramientas Computacionales',40,1);
 insert into curso values ('300CIG040','Introducción a la Ingeniería de Sistemas y Computación',40,1);
@@ -123,8 +138,9 @@ insert into curso values ('300CIG032','Animación y Simulación',40,7);
 insert into curso values ('300CIS019','Procesos y Diseño de Software',40,7);
 insert into curso values ('300IGG012','Seminario de Investigación',40,7);
 insert into curso values ('300FRG044','Aspectos Éticos, Sociales y Profesionales de la Computación',40,7);
-
+*/
 /* Cursos aun no abiertos */
+/*
 insert into curso values ('300CIG049','Introducción a la Seguridad Informática',40,8);
 insert into curso values ('300CID004','Procesamiento de Grandes Volúmenes de Datos',40,8);
 insert into curso values ('300CIG047','Sistemas de Interacción',40,8);
@@ -139,22 +155,23 @@ insert into curso values ('300IGG004','Trabajo de Grado',40,9);
 insert into curso values ('300FRG001','Ética',40,9);
 insert into curso values ('300CIG037','Práctica Profesional',40,10);
 insert into curso values ('300IGI003','Ingeniería Económica',40,10);
-
+*/
 /* PLAN VIEJO */
+/*
 insert into curso values ('300IGG002','Fundamentos de Investigación',40,8);
 insert into curso values ('300CIG009','Inteligencia Artificial',40,8);
 insert into curso values ('300CIG033','Introducción al Desarrollo de Videojuegos',40,9);
 insert into curso values ('300CIG031','Computación Móvil y Agentes Móviles',40,9);
 insert into curso values ('300CIS001','Desarrollo de Software a Gran Escala',40,7);
 insert into curso values ('300CID002','Implementación de Bases Datos',40,7);
-
+*/
 
 /*------------------------------------------------*/
 /*------------------------------------------------*/
 /* Cursos de Diseño de Comunicación Visual        */
 /*------------------------------------------------*/
 /*------------------------------------------------*/
-
+/*
 insert into curso values ('300CMM015','Imagen Dibujo y Texto Digital',120001,1);
 insert into curso values ('300ARA001','Dibujo I',120001,1);
 insert into curso values ('300CMG040','Historia de la Comunicación Visual',120001,1);
@@ -166,6 +183,6 @@ insert into curso values ('300CMM016','Estudios de la Imagen',120001,2);
 insert into curso values ('300ARG006','Arte Clásico y Diseño',120001,2);
 insert into curso values ('300CMO011','Diseño 3D',120001,2);
 insert into curso values ('300CMO012','Tipografía I: Principios',120001,2);
-
+*/
 
 COMMIT;

@@ -16,33 +16,10 @@ app.config.update(dict(
 ))
 app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 
-##cursos = [{"codigo":"300ITA001",
-##           "nombre":"Introducción al Modelado de Sistemas",
-##           "clase":"A",
-##           "profesor":"Gerardo M. Sarria M.",
-##           "horarios":[{"dia":"lunes","horaInicio":7.0,"horaFin":9.0},
-##                     {"dia":"jueves","horaInicio":14.0,"horaFin":16.0}],
-##           "semestre":1,
-##           "departamento":"DECC"},
-##          {"codigo":"300ITA001",
-##           "nombre":"Introducción al Modelado de Sistemas",
-##           "clase":"A",
-##           "profesor":"Gerardo M. Sarria M.",
-##           "horarios":[{"dia":"lunes","horaInicio":7.5,"horaFin":9.5},
-##                     {"dia":"jueves","horaInicio":14.0,"horaFin":16.0}],
-##           "semestre":1,
-##           "departamento":"DECC"},
-##          {"codigo":"300CIP001",
-##           "nombre":"Introducción a la Programación",
-##           "clase":"A",
-##           "profesor":"Gerardo M. Sarria M.",
-##           "horarios":[{"dia":"lunes","horaInicio":9.0,"horaFin":11.0},
-##                     {"dia":"jueves","horaInicio":14.0,"horaFin":16.0}],
-##           "semestre":1,
-##           "departamento":"DECC"}]
 
 def connect_db():
     return sqlite3.connect(app.config['DATABASE'])
+
 
 def get_db():
     """
@@ -52,6 +29,55 @@ def get_db():
     if not hasattr(flask.g, 'sqlite_db'):
         flask.g.sqlite_db = connect_db()
     return flask.g.sqlite_db
+
+
+def addSpace(curso):
+    """
+    Función que estandariza el formato del código del curso para poder comparar
+    Entradas: curso, texto que representa el código del curso
+    Salida: el código estandarizado
+    """
+    if(curso[0] != ' '):
+        return ' '+curso
+    else:
+        return curso
+
+def delSpace(curso):
+    """
+    Función que estandariza el formato del código del curso para poder comparar
+    Entradas: curso, texto que representa el código del curso
+    Salida: el código estandarizado
+    """
+    if(curso[0] == ' '):
+        return curso[1:]
+    else:
+        return curso
+
+
+def programaXcolumna(filtroPrograma):
+    """
+    Función que retorna la columna del archivo excel de la Facultad correspondiente a un programa dado
+    Entradas: filtroPrograma, el código del programa
+    Salida: La columna correspondiente
+    """
+    if(filtroPrograma == 10):
+        columnaPrograma = 15
+    elif(filtroPrograma == 20):
+        columnaPrograma = 9
+    elif (filtroPrograma == 30):
+        columnaPrograma = 12
+    elif (filtroPrograma == 40):
+        columnaPrograma = 21
+    elif (filtroPrograma == 10001):
+        columnaPrograma = 24
+    elif (filtroPrograma == 10002):
+        columnaPrograma = 6
+    elif (filtroPrograma == 10003):
+        columnaPrograma = 18
+    elif (filtroPrograma == 10004):
+        columnaPrograma = 27
+    return columnaPrograma
+
 
 def store_Profesores(db, sheetSuper):
     """
@@ -67,16 +93,39 @@ def store_Profesores(db, sheetSuper):
             db.execute("insert into profesor values (?,?,NULL)", [id_profesor, nombre_profesor])
         db.commit()
 
-def estandarizar(curso):
+
+def store_Cursos(db, sheetFIC, filtroPrograma):
     """
-    Función que estandariza el formato del código del curso para poder comparar
-    Entradas: curso, texto que representa el código del curso
-    Salida: el código estandarizado
+    Procedimiento que almacena la información de los cursos en la base de datos
+    Entradas: db, la base de datos
+              sheetFIC, la hoja de cálculo de los cursos de la Facultad
+              filtroPrograma, el programa que debe ser almacenado
+    Salida: Base de datos actualizada
     """
-    if(curso[0] != ' '):
-        return ' '+curso
-    else:
-        return curso
+
+    # Se consigue la columna correspondiente al programa académico
+    columnaPrograma = programaXcolumna(filtroPrograma)
+
+    # Se empieza a leer la información del Excel de la Facultad
+    for filaFIC in range(1,sheetFIC.nrows):
+        if(sheetFIC.cell_value(filaFIC, columnaPrograma) != ''  and \
+                        (sheetFIC.cell_value(filaFIC, 1) == "DEP-CIC" or \
+                         sheetFIC.cell_value(filaFIC, 1) == "DEP-CNMT" or \
+                         sheetFIC.cell_value(filaFIC, 1) == "DEP-CIP")):
+            codigo = delSpace(sheetFIC.cell_value(filaFIC, 2))
+            if(codigo != "Por Definir"):
+                nombre = sheetFIC.cell_value(filaFIC, 3)
+                semestre = sheetFIC.cell_value(filaFIC, columnaPrograma+1)
+                # Inserta el registro en la tabla
+                if not db.execute("select codigo from curso \
+                            where codigo = ? and nombre = ? and \
+                            id_carrera = ? and semestre = ?",[codigo, nombre, filtroPrograma, semestre]).fetchall():
+                    db.execute("insert into curso values (?,?,?,?)",[codigo, nombre, filtroPrograma, semestre])
+
+                db.commit()
+
+
+
 
 def store_Horarios(db, wbSuper, sheetSuper, sheetFIC, filtroPrograma):
     """
@@ -88,16 +137,23 @@ def store_Horarios(db, wbSuper, sheetSuper, sheetFIC, filtroPrograma):
               filtroPrograma, el programa que debe ser almacenado
     Salida: Base de datos actualizada
     """
+
+    # Se consigue la columna correspondiente al programa académico
+    columnaPrograma = programaXcolumna(filtroPrograma)
+
     # Se empieza a leer la información del Excel de la Facultad
-    # Sistemas es la columna 21 del Excel
     for filaFIC in range(1,sheetFIC.nrows):
-        if(sheetFIC.cell_value(filaFIC, 21) != ''):
-            curso = estandarizar(sheetFIC.cell_value(filaFIC, 2))
+        if(sheetFIC.cell_value(filaFIC, columnaPrograma) != '' and \
+                        (sheetFIC.cell_value(filaFIC, 1) == "DEP-CIC" or \
+                         sheetFIC.cell_value(filaFIC, 1) == "DEP-CNMT" or \
+                         sheetFIC.cell_value(filaFIC, 1) == "DEP-CIP")):
+            curso = addSpace(sheetFIC.cell_value(filaFIC, 2))
             # Se hace la comparación con los registros del SuperXcel
             for filaSuper in range(1,sheetSuper.nrows):
                 if(curso == sheetSuper.cell_value(filaSuper, 4) and \
                         (sheetSuper.cell_value(filaSuper, 2) == "DEP-CIC" or \
-                         sheetSuper.cell_value(filaSuper, 2) == "DEP-CNMT")):
+                         sheetSuper.cell_value(filaSuper, 2) == "DEP-CNMT" or \
+                         sheetSuper.cell_value(filaSuper, 2) == "DEP-CIP")):
                     # Código del curso
                     #print("Codigo: " + sheetSuper.cell_value(filaSuper, 4))
                     codigo = sheetSuper.cell_value(filaSuper, 4)
@@ -147,11 +203,13 @@ def store_Horarios(db, wbSuper, sheetSuper, sheetFIC, filtroPrograma):
                     #print("Hora inicio: " + str(hora))
                     hora_final = hora
 
+                    #print(codigo,grupo,filtroPrograma,id_profesor)
+
                     # Inserta los registros en las tablas
                     if not db.execute("select codigo from grupo_periodo \
-                                where codigo = ? and grupo = ? and id_carrera = 40 and id_profesor = ? \
-                                and codigo_periodo = 1008",[codigo, grupo, id_profesor]).fetchall():
-                        db.execute("insert into grupo_periodo values (?,?,?,?,1008)",[codigo, grupo, filtroPrograma,id_profesor])
+                                where codigo = ? and grupo = ? and id_carrera = ? and id_profesor = ? \
+                                and codigo_periodo = 1008",[codigo, grupo, filtroPrograma, id_profesor]).fetchall():
+                        db.execute("insert into grupo_periodo values (?,?,?,?,1008)",[codigo, grupo, filtroPrograma, id_profesor])
 
                     if not db.execute("select codigo_curso from horario \
                                 where codigo_curso = ? and grupo_curso = ? and dia = ? and horainicio = ? \
@@ -183,6 +241,9 @@ def get_excel(filtroPrograma):
     # Almacena la información de los profesores
     store_Profesores(db,sheetSuper)
 
+    # Almacena la información de los cursos
+    store_Cursos(db,sheetFIC,filtroPrograma)
+
     # Almacena la información de los horarios
     store_Horarios(db,wbSuper,sheetSuper,sheetFIC,filtroPrograma)
 
@@ -205,6 +266,7 @@ def procesarProgramas():
 
     # Retorna los programas encontrados en la base de datos
     return programas
+
 
 def procesarCursos(filtroSemestre, filtroPrograma):
     """
@@ -268,6 +330,7 @@ def procesarCursos(filtroSemestre, filtroPrograma):
     # Retorna los dias agrupados
     return [lunes,martes,miercoles,jueves,viernes,sabado,domingo]
 
+
 @app.route("/",methods=["GET","POST"])
 def pagina_principal():
     """
@@ -304,6 +367,7 @@ def pagina_principal():
                                                     "programaActual":filtroPrograma,
                                                     "programas":programas})
 
+
 # Si se llama la aplicación directamente desde python
 if(__name__ == "__main__"):
-    app.run(host="127.0.0.1", port=5016, debug=True)
+    app.run(host="127.0.0.1", port=5018, debug=True)
