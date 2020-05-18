@@ -143,80 +143,91 @@ def store_Horarios(db, wbSuper, sheetSuper, sheetFIC, filtroPrograma):
 
     # Se empieza a leer la información del Excel de la Facultad
     for filaFIC in range(1,sheetFIC.nrows):
+
+        # Se revisa si el curso es del Programa y de los departamentos de la Facultad
         if(sheetFIC.cell_value(filaFIC, columnaPrograma) != '' and \
                         (sheetFIC.cell_value(filaFIC, 1) == "DEP-CIC" or \
                          sheetFIC.cell_value(filaFIC, 1) == "DEP-CNMT" or \
                          sheetFIC.cell_value(filaFIC, 1) == "DEP-CIP")):
             curso = addSpace(sheetFIC.cell_value(filaFIC, 2))
-            # Se hace la comparación con los registros del SuperXcel
+
+            # Se hace el ciclo para realizar la comparación con los registros del SuperXcel
             for filaSuper in range(1,sheetSuper.nrows):
-                if(curso == sheetSuper.cell_value(filaSuper, 4) and \
-                        (sheetSuper.cell_value(filaSuper, 2) == "DEP-CIC" or \
-                         sheetSuper.cell_value(filaSuper, 2) == "DEP-CNMT" or \
-                         sheetSuper.cell_value(filaSuper, 2) == "DEP-CIP")):
-                    # Código del curso
-                    #print("Codigo: " + sheetSuper.cell_value(filaSuper, 4))
-                    codigo = sheetSuper.cell_value(filaSuper, 4)
-                    if(codigo[0] == ' '):
-                        codigo = sheetSuper.cell_value(filaSuper, 4)[1:]
-                    # Nombre del curso
-                    #print("Nombre: " + sheetSuper.cell_value(filaSuper, 6))
-                    # Grupo
-                    #print("Grupo: " + sheetSuper.cell_value(filaSuper, 5))
-                    grupo = sheetSuper.cell_value(filaSuper, 5)
-                    # ID del profesor
-                    #print("Profesor: " + sheetSuper.cell_value(filaSuper, 8))
-                    id_profesor = sheetSuper.cell_value(filaSuper, 8)
-                    nombre_profesor = sheetSuper.cell_value(filaSuper, 9)
-                    # Dia
-                    #print("Dia: " + sheetSuper.cell_value(filaSuper, 15))
-                    dia = sheetSuper.cell_value(filaSuper, 15)
-                    if(dia == 'Verificar'):
-                        # Si en el superXcel no hay un dia establecido se poner este por defecto
-                        dia = 'Domingo'
-                    # Hora inicio
-                    tmp = sheetSuper.cell_value(filaSuper, 16)
-                    if(tmp == ''):
-                        # Si en el superXcel no hay un horario establecido se poner este por defecto
-                        hora = 7.0
-                    else:
-                        hora = xlrd.xldate.xldate_as_datetime(tmp, wbSuper.datemode).time().hour
-                        minuto = xlrd.xldate.xldate_as_datetime(tmp, wbSuper.datemode).time().minute
-                        if(minuto == 30):
-                            hora = hora + 0.5
+
+                # Se revisa si el horario va hasta mayo (i.e. no es una reserva pequeña)
+                # ESTO TIENE QUE CAMBIAR PARA QUE SEA GENERAL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                mes = 0
+                tmp = sheetSuper.cell_value(filaSuper, 14)
+                if(tmp != ''):
+                    mes = xlrd.xldate.xldate_as_datetime(tmp, wbSuper.datemode).date().month
+                if (mes >= 5):
+
+                    # Se revisa si es un curso del Programa y de los departamentos de la Facultad
+                    if(curso == sheetSuper.cell_value(filaSuper, 4) and \
+                            (sheetSuper.cell_value(filaSuper, 2) == "DEP-CIC" or \
+                             sheetSuper.cell_value(filaSuper, 2) == "DEP-CNMT" or \
+                             sheetSuper.cell_value(filaSuper, 2) == "DEP-CIP")):
+                        # Código del curso
+                        #print("Codigo: " + sheetSuper.cell_value(filaSuper, 4))
+                        codigo = sheetSuper.cell_value(filaSuper, 4)
+                        if(codigo[0] == ' '):
+                            codigo = sheetSuper.cell_value(filaSuper, 4)[1:]
+                        # Nombre del curso
+                        #print("Nombre: " + sheetSuper.cell_value(filaSuper, 6))
+                        # Grupo
+                        #print("Grupo: " + sheetSuper.cell_value(filaSuper, 5))
+                        grupo = sheetSuper.cell_value(filaSuper, 5)
+                        # ID del profesor
+                        #print("Profesor: " + sheetSuper.cell_value(filaSuper, 8))
+                        id_profesor = sheetSuper.cell_value(filaSuper, 8)
+                        nombre_profesor = sheetSuper.cell_value(filaSuper, 9)
+                        # Dia
+                        #print("Dia: " + sheetSuper.cell_value(filaSuper, 15))
+                        dia = sheetSuper.cell_value(filaSuper, 15)
+                        if(dia == 'Verificar'):
+                            # Si en el superXcel no hay un dia establecido se poner este por defecto
+                            dia = 'Domingo'
+                        # Hora inicio
+                        tmp = sheetSuper.cell_value(filaSuper, 16)
+                        if(tmp == ''):
+                            # Si en el superXcel no hay un horario establecido se poner este por defecto
+                            hora = 7.0
                         else:
-                            hora = hora + 0.0
-                    #print("Hora inicio: " + str(hora))
-                    hora_inicio = hora
-                    # Hora final
-                    tmp = sheetSuper.cell_value(filaSuper, 17)
-                    if(tmp == ''):
-                        # Si en el superXcel no hay un horario establecido se poner este por defecto
-                        hora = 9.0
-                    else:
-                        hora = xlrd.xldate.xldate_as_datetime(tmp, wbSuper.datemode).time().hour
-                        minuto = xlrd.xldate.xldate_as_datetime(tmp, wbSuper.datemode).time().minute
-                        if (minuto == 30):
-                            hora = hora + 0.5
+                            hora = xlrd.xldate.xldate_as_datetime(tmp, wbSuper.datemode).time().hour
+                            minuto = xlrd.xldate.xldate_as_datetime(tmp, wbSuper.datemode).time().minute
+                            if(minuto == 30):
+                                hora = hora + 0.5
+                            else:
+                                hora = hora + 0.0
+                        #print("Hora inicio: " + str(hora))
+                        hora_inicio = hora
+                        # Hora final
+                        tmp = sheetSuper.cell_value(filaSuper, 17)
+                        if(tmp == ''):
+                            # Si en el superXcel no hay un horario establecido se poner este por defecto
+                            hora = 9.0
                         else:
-                            hora = hora + 0.0
-                    #print("Hora inicio: " + str(hora))
-                    hora_final = hora
+                            hora = xlrd.xldate.xldate_as_datetime(tmp, wbSuper.datemode).time().hour
+                            minuto = xlrd.xldate.xldate_as_datetime(tmp, wbSuper.datemode).time().minute
+                            if (minuto == 30):
+                                hora = hora + 0.5
+                            else:
+                                hora = hora + 0.0
+                        #print("Hora inicio: " + str(hora))
+                        hora_final = hora
 
-                    #print(codigo,grupo,filtroPrograma,id_profesor)
+                        # Inserta los registros en las tablas
+                        if not db.execute("select codigo from grupo_periodo \
+                                    where codigo = ? and grupo = ? and id_carrera = ? and id_profesor = ? \
+                                    and codigo_periodo = 1008",[codigo, grupo, filtroPrograma, id_profesor]).fetchall():
+                            db.execute("insert into grupo_periodo values (?,?,?,?,1008)",[codigo, grupo, filtroPrograma, id_profesor])
 
-                    # Inserta los registros en las tablas
-                    if not db.execute("select codigo from grupo_periodo \
-                                where codigo = ? and grupo = ? and id_carrera = ? and id_profesor = ? \
-                                and codigo_periodo = 1008",[codigo, grupo, filtroPrograma, id_profesor]).fetchall():
-                        db.execute("insert into grupo_periodo values (?,?,?,?,1008)",[codigo, grupo, filtroPrograma, id_profesor])
+                        if not db.execute("select codigo_curso from horario \
+                                    where codigo_curso = ? and grupo_curso = ? and dia = ? and horainicio = ? \
+                                    and horafin = ?",[codigo, grupo, dia, hora_inicio, hora_final]).fetchall():
+                            db.execute("insert into horario values (?,?,?,?,?)",[codigo, grupo, dia, hora_inicio, hora_final])
 
-                    if not db.execute("select codigo_curso from horario \
-                                where codigo_curso = ? and grupo_curso = ? and dia = ? and horainicio = ? \
-                                and horafin = ?",[codigo, grupo, dia, hora_inicio, hora_final]).fetchall():
-                        db.execute("insert into horario values (?,?,?,?,?)",[codigo, grupo, dia, hora_inicio, hora_final])
-
-                    db.commit()
+                        db.commit()
 
 
 def get_excel(filtroPrograma):
