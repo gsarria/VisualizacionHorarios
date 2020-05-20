@@ -12,17 +12,6 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> -->
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
     <style>
-        .wrapper {
-            width: 800px;
-        }
-        .ui-tooltip {
-    		/* tooltip container box */
-    		white-space: pre-line;
-		}
-		.ui-tooltip-content {
-    		/* tooltip content */
-    		white-space: pre-line;
-		}
 		.modal {
 			display: none; /* Hidden by default */
 			position: fixed; /* Stay in place */
@@ -107,10 +96,14 @@
 		});
     </script>
 	<script>
-		function ShowCurso() {
-			var modal = document.getElementById("myModal");
+		function ShowCurso(codigo,nombre,profesor, grupo) {
+			var modal = document.getElementById("cursoView");
 			var span = document.getElementsByClassName("close")[0];
 			modal.style.display = "block";
+
+			document.getElementById("chosenCursoNombre").innerHTML = "("+codigo+") "+nombre+" - Grupo "+grupo;
+			document.getElementById("chosenCursoProfesor").innerHTML = "Profesor: "+profesor;
+
 			span.onclick = function() {
 		  		modal.style.display = "none";
 			}
@@ -189,7 +182,7 @@
 					{% for clase in datos[dia] %}
 					{% if clase["horaInicio"] == i+0.0 %}
 					<td rowspan="{{clase['span']}}" bgcolor="#00467c">
-						<a nohref="#" id="curso" onclick="ShowCurso();return false;" style="color:white" data-toggle="tooltip" title="{{clase['nombre']}} &#013; Grupo: {{clase['grupo']}} &#013; Profesor: {{clase['profesor']}}">{{clase['codigo']}}</a>
+						<a nohref="#" id="curso" onclick="ShowCurso('{{clase['codigo']}}','{{clase['nombre']}}','{{clase['profesor']}}','{{clase['grupo']}}');return false;" style="color:white" data-toggle="tooltip" title="{{clase['nombre']}} &#013; Grupo: {{clase['grupo']}} &#013; Profesor: {{clase['profesor']}}">{{clase['codigo']}}</a>
 					</td>
 					{% endif %}
 					{% endfor %}
@@ -209,25 +202,34 @@
 		</div>
 		{% endfor %}
 	</div>
-	<!-- The Modal -->
-	<div id="myModal" class="modal">
+
+	<div id="cursoView" class="modal">
 		<!-- Modal content -->
 		<div class="modal-content">
 			<div class="modal-header">
 				<span class="close">&times;</span>
-				<h2>Curso:</h2>
+				<h2 id="chosenCursoNombre"></h2>
 			</div>
 			<div class="modal-body">
 				<table border="1">
 					<tr>
+						<td></td>
 						{% for dia in ["Lunes","Martes","Miercoles","Jueves","Viernes","Sabado","Domingo"] %}
-						<td>{{dia}}</td>
+						<th>{{dia}}</th>
 						{% endfor %}
 					</tr>
+					{% for i in range(7,21) %}
+					<tr>
+						<th>{{i}}:00</th>
+					</tr>
+					<tr>
+						<th>{{i}}:30</th>
+					</tr>
+					{% endfor %}
 				</table>
 			</div>
 			<div class="modal-footer">
-				<h3>Datos</h3>
+				<h4 id="chosenCursoProfesor"></h4>
 			</div>
 		</div>
 	</div>

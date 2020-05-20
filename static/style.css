@@ -97,3 +97,15 @@ html 			{ font-size: 70%; }
   background-color: gray;
   border: 1px solid black;
 }
+
+.wrapper {
+    width: 800px;
+}
+.ui-tooltip {
+    /* tooltip container box */
+    white-space: pre-line;
+}
+.ui-tooltip-content {
+    /* tooltip content */
+    white-space: pre-line;
+}
