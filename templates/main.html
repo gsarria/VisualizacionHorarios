@@ -103,8 +103,11 @@
 
 			document.getElementById("chosenCursoNombre").innerHTML = "("+codigo+") "+nombre+" - Grupo "+grupo;
 			document.getElementById("chosenCursoProfesor").innerHTML = "Profesor: "+profesor;
+			document.getElementById(dia+horaInicio).rowSpan = duracion;
+			document.getElementById(dia+horaInicio).style.backgroundColor = "#00467c"
+			document.getElementById(dia+horaInicio).style.color = "white"
 			document.getElementById(dia+horaInicio).innerHTML = salon;
-			//console.log(dia+horaInicio);
+			console.log(duracion);
 
 			span.onclick = function() {
 		  		modal.style.display = "none";
