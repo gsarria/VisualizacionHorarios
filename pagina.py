@@ -216,6 +216,9 @@ def store_Horarios(db, wbSuper, sheetSuper, sheetFIC, filtroPrograma):
                         #print("Hora inicio: " + str(hora))
                         hora_final = hora
 
+                        # Salón
+                        salon = sheetSuper.cell_value(filaSuper, 18)
+
                         # Inserta los registros en las tablas
                         if not db.execute("select codigo from grupo_periodo \
                                     where codigo = ? and grupo = ? and id_carrera = ? and id_profesor = ? \
@@ -224,8 +227,8 @@ def store_Horarios(db, wbSuper, sheetSuper, sheetFIC, filtroPrograma):
 
                         if not db.execute("select codigo_curso from horario \
                                     where codigo_curso = ? and grupo_curso = ? and dia = ? and horainicio = ? \
-                                    and horafin = ?",[codigo, grupo, dia, hora_inicio, hora_final]).fetchall():
-                            db.execute("insert into horario values (?,?,?,?,?)",[codigo, grupo, dia, hora_inicio, hora_final])
+                                    and horafin = ? and salon = ?",[codigo, grupo, dia, hora_inicio, hora_final, salon]).fetchall():
+                            db.execute("insert into horario values (?,?,?,?,?,?)",[codigo, grupo, dia, hora_inicio, hora_final, salon])
 
                         db.commit()
 
@@ -291,13 +294,13 @@ def procesarCursos(filtroSemestre, filtroPrograma):
 
     # Recupera (de la base de datos) los cursos, sus profesores y sus horarios
     if(filtroSemestre == 0):
-        cur1 = db.execute("select d.codigo, d.nombre, g.grupo, e.nombre, f.dia, f.horainicio, f.horafin \
+        cur1 = db.execute("select d.codigo, d.nombre, g.grupo, e.nombre, f.dia, f.horainicio, f.horafin, f.salon \
                            from curso as d, profesor as e, horario as f, grupo_periodo as g \
                            where g.id_profesor = e.id and g.codigo = f.codigo_curso \
                            and g.grupo = f.grupo_curso and d.codigo = g.codigo and d.id_carrera = g.id_carrera \
                            and d.id_carrera = ?",[filtroPrograma])
     else:
-        cur1 = db.execute("select d.codigo, d.nombre, g.grupo, e.nombre, f.dia, f.horainicio, f.horafin \
+        cur1 = db.execute("select d.codigo, d.nombre, g.grupo, e.nombre, f.dia, f.horainicio, f.horafin, f.salon \
                            from curso as d, profesor as e, horario as f, grupo_periodo as g \
                            where g.id_profesor = e.id and g.codigo = f.codigo_curso \
                            and g.grupo = f.grupo_curso and d.codigo = g.codigo and d.id_carrera = g.id_carrera \
@@ -320,7 +323,8 @@ def procesarCursos(filtroSemestre, filtroPrograma):
                 "grupo":curso[2],
                 "profesor":curso[3],
                 "horaInicio":curso[5],
-                "span":(curso[6]-curso[5])*2}
+                "span":(curso[6]-curso[5])*2,
+                "salon":curso[7]}
         if(curso[4] == "Lunes"):
             lunes.append(temp)
         elif(curso[4] == "Martes"):
@@ -379,4 +383,4 @@ def pagina_principal():
 
 # Si se llama la aplicación directamente desde python
 if(__name__ == "__main__"):
-    app.run(host="127.0.0.1", port=5019, debug=True)
+    app.run(host="127.0.0.1", port=5020, debug=True)

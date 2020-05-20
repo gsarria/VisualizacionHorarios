@@ -96,13 +96,15 @@
 		});
     </script>
 	<script>
-		function ShowCurso(codigo,nombre,profesor, grupo) {
+		function ShowCurso(codigo, nombre, profesor, grupo, dia, horaInicio, duracion, salon) {
 			var modal = document.getElementById("cursoView");
 			var span = document.getElementsByClassName("close")[0];
 			modal.style.display = "block";
 
 			document.getElementById("chosenCursoNombre").innerHTML = "("+codigo+") "+nombre+" - Grupo "+grupo;
 			document.getElementById("chosenCursoProfesor").innerHTML = "Profesor: "+profesor;
+			document.getElementById(dia+horaInicio).innerHTML = salon;
+			//console.log(dia+horaInicio);
 
 			span.onclick = function() {
 		  		modal.style.display = "none";
@@ -182,7 +184,7 @@
 					{% for clase in datos[dia] %}
 					{% if clase["horaInicio"] == i+0.0 %}
 					<td rowspan="{{clase['span']}}" bgcolor="#00467c">
-						<a nohref="#" id="curso" onclick="ShowCurso('{{clase['codigo']}}','{{clase['nombre']}}','{{clase['profesor']}}','{{clase['grupo']}}');return false;" style="color:white" data-toggle="tooltip" title="{{clase['nombre']}} &#013; Grupo: {{clase['grupo']}} &#013; Profesor: {{clase['profesor']}}">{{clase['codigo']}}</a>
+						<a nohref="#" onclick="ShowCurso('{{clase['codigo']}}','{{clase['nombre']}}','{{clase['profesor']}}','{{clase['grupo']}}','{{dia}}','{{clase['horaInicio']}}','{{clase['span']}}','{{clase['salon']}}');return false;" style="color:white" data-toggle="tooltip" title="{{clase['nombre']}} &#013; Grupo: {{clase['grupo']}} &#013; Profesor: {{clase['profesor']}}">{{clase['codigo']}}</a>
 					</td>
 					{% endif %}
 					{% endfor %}
@@ -192,7 +194,7 @@
 					{% for clase in datos[dia] %}
 					{% if clase["horaInicio"] == i+0.5 %}
 					<td rowspan="{{clase['span']}}" bgcolor="#00467c">
-						<a nohref="#" style="color:white" data-toggle="tooltip" title="{{clase['nombre']}} &#013; Grupo: {{clase['grupo']}} &#013; Profesor: {{clase['profesor']}}">{{clase['codigo']}}</a>
+						<a nohref="#" onclick="ShowCurso('{{clase['codigo']}}','{{clase['nombre']}}','{{clase['profesor']}}','{{clase['grupo']}}','{{dia}}','{{clase['horaInicio']}}','{{clase['span']}}','{{clase['salon']}}');return false;" style="color:white" data-toggle="tooltip" title="{{clase['nombre']}} &#013; Grupo: {{clase['grupo']}} &#013; Profesor: {{clase['profesor']}}">{{clase['codigo']}}</a>
 					</td>
 					{% endif %}
 					{% endfor %}
@@ -221,9 +223,15 @@
 					{% for i in range(7,21) %}
 					<tr>
 						<th>{{i}}:00</th>
+						{% for dia in ["Lunes","Martes","Miercoles","Jueves","Viernes","Sabado","Domingo"] %}
+						<td id="{{dia}}{{i}}.0"></td>
+						{% endfor %}
 					</tr>
 					<tr>
 						<th>{{i}}:30</th>
+						{% for dia in ["Lunes","Martes","Miercoles","Jueves","Viernes","Sabado","Domingo"] %}
+						<td id="{{dia}}{{i}}.5"></td>
+						{% endfor %}
 					</tr>
 					{% endfor %}
 				</table>
