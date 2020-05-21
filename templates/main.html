@@ -96,6 +96,19 @@
 		});
     </script>
 	<script>
+		function clearCursoWindow() {
+			var dias = ["Lunes","Martes","Miercoles","Jueves","Viernes","Sabado","Domingo"];
+			dias.forEach(function(element) {
+				for(let i = 7; i < 21; i++){
+					document.getElementById(element+i.toString()+".0").rowSpan = 1;
+					document.getElementById(element+i.toString()+".5").rowSpan = 1;
+					document.getElementById(element+i.toString()+".0").style.backgroundColor = "white";
+					document.getElementById(element+i.toString()+".5").style.backgroundColor = "white";
+					document.getElementById(element+i.toString()+".0").innerHTML = "";
+					document.getElementById(element+i.toString()+".5").innerHTML = "";
+				}
+			});
+		}
 		function ShowCurso(codigo, nombre, profesor, grupo, dia, horaInicio, duracion, salon) {
 			var modal = document.getElementById("cursoView");
 			var span = document.getElementsByClassName("close")[0];
@@ -104,16 +117,18 @@
 			document.getElementById("chosenCursoNombre").innerHTML = "("+codigo+") "+nombre+" - Grupo "+grupo;
 			document.getElementById("chosenCursoProfesor").innerHTML = "Profesor: "+profesor;
 			document.getElementById(dia+horaInicio).rowSpan = duracion;
-			document.getElementById(dia+horaInicio).style.backgroundColor = "#00467c"
-			document.getElementById(dia+horaInicio).style.color = "white"
+			document.getElementById(dia+horaInicio).style.backgroundColor = "#00467c";
+			document.getElementById(dia+horaInicio).style.color = "white";
 			document.getElementById(dia+horaInicio).innerHTML = salon;
-			console.log(duracion);
+			//console.log(duracion);
 
 			span.onclick = function() {
+				clearCursoWindow();
 		  		modal.style.display = "none";
 			}
 			window.onclick = function(event) {
-		  		if (event.target == modal) {
+				if (event.target == modal) {
+					clearCursoWindow();
 					modal.style.display = "none";
 		  		}
 			}
